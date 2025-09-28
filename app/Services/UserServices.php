@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\User;
+
+class UserServices
+{
+    public function addOrEditUser($data)
+    {
+        $data['role_id'] = 2;
+        $data['is_otp_based_login'] = 1;
+
+        return User::firstOrCreate([
+            'email' => $data['email']
+        ], $data);
+    }
+}
