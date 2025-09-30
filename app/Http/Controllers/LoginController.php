@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UserRegistered;
 use App\Http\Requests\UserRequest;
-use App\Models\User;
+use App\Services\OtpServices;
 use App\Services\UserServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,10 +13,15 @@ use Illuminate\Support\Facades\Validator;
 class LoginController extends Controller
 {
     private $userService;
+    private $otpService;
 
-    public function __construct()
+    public function __construct(
+        UserServices $userService,
+        OtpServices $otpService
+    )
     {
-        $this->userService = new UserServices();
+        $this->userService = $userService;
+        $this->otpService = $otpService;
     }
 
     public function login(Request $request)
@@ -54,16 +60,26 @@ class LoginController extends Controller
         $save_user = $this->userService->addOrEditUser($data);
 
         if(!$save_user)
-        {
+        {   
             return response()->json([
                 'status' => 'error',
                 'message' => 'User registration failed',
             ], 500);
         }else{
+            //fire event to send welcome mail
+            event(new UserRegistered($save_user));
+
             return response()->json([
                 'status' => 'success',
-                'data' => $data,
+                'data' => $save_user,
             ], 200);
         }
+    }
+
+    public function getOtp(UserRequest $request)
+    {
+        $data = $request->validated();
+        
+        $sendTOtp = $this->otpService->sendOtp($data['mobile']);
     }
 }

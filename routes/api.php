@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:api');
 Route::post('/register', [LoginController::class, 'register']);
+Route::post("get-otp", [LoginController::class, 'getOtp'])->name('getOtp');
 
 Route::middleware([
     'auth:sanctum',
@@ -15,5 +16,6 @@ Route::middleware([
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+
 });
 
