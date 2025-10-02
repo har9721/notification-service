@@ -19,7 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
             RateLimiter::for(
                 "api",
                 function ($request) {
-                    return Limit::perMinute(1)->by(
+                    return Limit::perMinute(5)->by(
                         $request->user()?->id ?: $request->ip()
                     );
                 }
