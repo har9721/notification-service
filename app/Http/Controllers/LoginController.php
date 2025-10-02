@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\UserRegistered;
 use App\Http\Requests\UserRequest;
+use App\Jobs\sendWelcomeEmailJob;
 use App\Services\OtpServices;
 use App\Services\UserServices;
 use Illuminate\Http\Request;
@@ -67,7 +68,9 @@ class LoginController extends Controller
             ], 500);
         }else{
             //fire event to send welcome mail
-            event(new UserRegistered($save_user));
+            dispatch(new sendWelcomeEmailJob($save_user))
+                ->onQueue('low_priority_queue');
+                // ->delay(now()->addSeconds(60));
 
             return response()->json([
                 'status' => 'success',

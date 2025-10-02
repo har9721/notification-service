@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Events\UserRegistered;
+use App\Jobs\sendOtpEmail;
 use App\Models\OTP;
 use App\Models\User;
 use Carbon\Carbon;
@@ -24,11 +25,7 @@ class OtpServices
     {
         $otp = generateOtp();
 
-        $user = $this->user->where([
-            'mobile' => $mobile
-        ])
-        ->whereNull('deleted_at')
-        ->first();
+        $user = $this->user->verifyUser($mobile);
 
         $save_otp = $this->otp->saveOtp([
             'user_id' => $user->id ?? null,
@@ -39,7 +36,8 @@ class OtpServices
 
         if($save_otp){
             //send otp to mobile using sms gateway
-            event(new UserRegistered($user));
+            // event(new UserRegistered($user));
+            dispatch(new sendOtpEmail($user, $otp))->onQueue('high_priority_queue');
 
             return response()->json([
                 'status' => 'success',
