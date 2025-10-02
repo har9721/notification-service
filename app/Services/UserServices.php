@@ -2,10 +2,22 @@
 
 namespace App\Services;
 
+use App\Models\OTP;
 use App\Models\User;
 
 class UserServices
 {
+    protected $user;
+    protected $otp;
+
+    public function __construct(
+        User $user,
+        OTP $otp
+    ){
+        $this->user = $user;
+        $this->otp = $otp;
+    }
+
     public function addOrEditUser($data)
     {
         $data['role_id'] = 2;
@@ -14,5 +26,17 @@ class UserServices
         return User::firstOrCreate([
             'email' => $data['email']
         ], $data);
+    }
+
+    public function sendOtp($mobile)
+    {
+        
+
+        if($user){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Mobile number not registered'
+            ], 404);
+        }
     }
 }

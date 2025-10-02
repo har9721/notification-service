@@ -17,34 +17,46 @@ class UserRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
-            'name' => [
-                'required',
-                'string',
-                'max:30',
-            ],
-            'email' => [
-                'required',
-                'email',
-                'unique:users,email',
-            ],
-            'password' => [
-                'required',
-                'string',
-                'min:6',
-            ],
-            'mobile' => [
-                'required',
-                'numeric',
-                'regex:/^\d{10}$/',
-                'unique:users,mobile'
-            ],
-            'alert_via' => [
-                'required',
-                'array',
-                'in:email,sms,whatsapp'
-            ],
-        ];
+        if($this->routeIs('getOtp'))
+        {
+            return [
+                "mobile" => [
+                    'required',
+                    'numeric',
+                    'regex:/^\d{10}$/',
+                    'exists:users,mobile'
+                ]
+            ];
+        }else{
+            return [
+                'name' => [
+                    'required',
+                    'string',
+                    'max:30',
+                ],
+                'email' => [
+                    'required',
+                    'email',
+                    'unique:users,email',
+                ],
+                'password' => [
+                    'required',
+                    'string',
+                    'min:6',
+                ],
+                'mobile' => [
+                    'required',
+                    'numeric',
+                    'regex:/^\d{10}$/',
+                    'unique:users,mobile'
+                ],
+                'alert_via' => [
+                    'required',
+                    'array',
+                    'in:email,sms,whatsapp'
+                ],
+            ];
+        }
     }
 
     public function messages()

@@ -1,0 +1,1 @@
+<p>{{$otp}} is your Notification Service verification code.</p>
