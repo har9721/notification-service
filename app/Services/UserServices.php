@@ -27,16 +27,4 @@ class UserServices
             'email' => $data['email']
         ], $data);
     }
-
-    public function sendOtp($mobile)
-    {
-        
-
-        if($user){
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Mobile number not registered'
-            ], 404);
-        }
-    }
 }
