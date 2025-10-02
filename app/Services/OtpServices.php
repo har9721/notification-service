@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Events\UserRegistered;
 use App\Models\OTP;
 use App\Models\User;
+use Carbon\Carbon;
 
 class OtpServices
 {
@@ -33,7 +34,7 @@ class OtpServices
             'user_id' => $user->id ?? null,
             'otp' => $otp,
             'is_used' => 0,
-            'expires_at' => now()->addMinutes(5)
+            'expires_at' => Carbon::now()->addMinutes(5)
         ]);
 
         if($save_otp){
@@ -54,6 +55,55 @@ class OtpServices
                 'message' => 'Failed to send OTP'
             ], 500);
         }
+    }
+
+    public function verifyOtp($mobile, $otp) 
+    {
+        $isValidUser = $this->user->verifyUser($mobile);
+
+        $isValidOtp = $this->otp->verifyOtp($isValidUser->id ?? null, $otp);
+
+        if(empty($isValidOtp))
+        {
+            $response = [
+                'status' => 'error',
+                'message' => 'OTP not found!'
+            ];
+        }
+        
+        if(!empty($isValidOtp))
+        {
+            $this->otp->markOtpAsUsed($isValidOtp->id);
+
+            //generate login token
+            $token = $this->user->generateLoginToken($isValidUser);
+
+            $response = [
+                'status' => 'success',
+                'message' => 'OTP verified successfully',
+                'user' => $isValidUser,
+                'token' => $token ?? null,
+                'token_type' => 'Bearer'
+            ];
+        }
+
+        if($isValidOtp && $isValidOtp->is_used == 1)
+        {
+            $response = [
+                'status' => 'error',
+                'message' => 'OTP already used!'
+            ];
+        }
+
+        if(Carbon::now()->greaterThan($isValidOtp->expires_at))
+        {
+            $response = [
+                'status' => 'error',
+                'message' => 'OTP expired!'
+            ];
+        }
+
+        return  $response;
     }
 }
 ?>

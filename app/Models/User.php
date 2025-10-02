@@ -51,4 +51,15 @@ class User extends Authenticatable
             set : fn ($value) => implode(',', $value),
         );
     }
+
+    public function verifyUser($mobile)
+    {
+        return $this->where('mobile', $mobile)->whereNull('deleted_at')->first();
+    }
+
+    public function generateLoginToken(User $user)
+    {
+        return $user->createToken('auth_token')->plainTextToken;
+    }
+
 }

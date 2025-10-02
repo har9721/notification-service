@@ -36,7 +36,7 @@ class LoginController extends Controller
         if(Auth::attempt($credentials))
         {
             $user = $request->user();
-            $token = $user->createToken('auth_token')->plainTextToken;
+            $token = $user->generateLoginToken($user);
             
             return response()->json([
                 'user' => $user,
@@ -81,5 +81,44 @@ class LoginController extends Controller
         $data = $request->validated();
         
         $sendTOtp = $this->otpService->sendOtp($data['mobile']);
+ 
+        (!empty($sendTOtp)) ? 
+            $sendTOtp : 
+            response()->json([
+                'status' => 'error',
+                'message' => 'Mobile number not registered'
+            ], 404);
+    }
+
+    public function verifyOtp(Request $request)
+    {
+        $validate = Validator::make($request->all(),[
+            'mobile' => [
+                'required',
+                'numeric',
+                'digits:10',
+                'exists:users,mobile'
+            ],
+            'otp' => [
+                'required',
+                'numeric',
+                'digits:6',
+                // 'exists:otp,otp'
+            ]
+        ])->stopOnFirstFailure(true);
+
+        if($validate->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $validate->errors(),
+            ], 422);
+        }else
+        {
+            $data = $request->all();
+
+            $verifyOtp = $this->otpService->verifyOtp($data['mobile'], $data['otp']);
+
+            return $verifyOtp;
+        }
     }
 }
