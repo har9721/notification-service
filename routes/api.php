@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LoginController;
+use App\Notifications\SendPushNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,5 +21,10 @@ Route::middleware([
         return $request->user();
     });
 
+    Route::get('/send-notification', function(Request $request){
+        $user = $request->user();
+        // dd($user);
+        return $user->notify(new SendPushNotification());
+    });
 });
 
