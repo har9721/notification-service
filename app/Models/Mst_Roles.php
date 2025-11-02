@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Mst_Roles extends Model
 {
@@ -12,4 +13,9 @@ class Mst_Roles extends Model
         'name',
         'is_active'
     ];
+
+    public function user()
+    {
+        return $this->hasOne(User::class, 'role_id');    
+    }
 }

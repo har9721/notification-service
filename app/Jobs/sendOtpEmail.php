@@ -36,7 +36,7 @@ class sendOtpEmail implements ShouldQueue
                 ->send(
                     new SendOtpMail(
                         $this->user->toArray(),
-                        $this->otp
+                        $this->otp  
                     )
                 );
         }
@@ -44,10 +44,12 @@ class sendOtpEmail implements ShouldQueue
         {
             if(str_contains($e->getMessage(), 'Connection could not be established with host')) 
             {
+                info('exception caught in if condtion of sendOtpEmail job');
                 throw $e; // re-throw the exception to trigger a retry
             }
             else if(str_contains($e->getMessage(), 'Too many emails per second'))
             {
+                info('exception caught in else if condtion of sendOtpEmail job');
                 throw $e; // re-throw the exception to trigger a retry
             }
         }

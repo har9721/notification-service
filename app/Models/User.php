@@ -62,4 +62,28 @@ class User extends Authenticatable
         return $user->createToken('auth_token')->plainTextToken;
     }
 
+    public function getUserList()
+    {
+        return User::with('roles')
+            ->whereNot('role_id', 1)
+            ->whereNull('deleted_at')->select(['id', 'name', 'role_id', 'mobile', 'alert_via', 'created_at'])
+            ->paginate(10);   
+    }
+
+    public function createdAt(): Attribute
+    {
+        return Attribute::make(
+            get : fn($value) => date('d-m-Y', strtotime($value))
+        );    
+    }
+
+    public function notificationUsers()
+    {
+        return $this->hasOne(ScheduleNotificationUsers::class, 'user_ID')->select(['id','notification_id','user_ID']);    
+    }
+
+    public function roles()
+    {
+        return $this->belongsTo(Mst_Roles::class, 'role_id')->select('id','name');
+    }
 }

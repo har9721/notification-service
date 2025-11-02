@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\OTP;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class UserServices
 {
@@ -26,5 +27,21 @@ class UserServices
         return User::firstOrCreate([
             'email' => $data['email']
         ], $data);
+    }
+
+    public function fetchUserList()
+    {
+        $users = $this->user->getUserList();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $users->items(),
+            'pagination' => [
+                'current_page' => $users->currentPage(),
+                'per_page' => $users->perPage(),
+                'total' => $users->total(),
+                'last_page' => $users->lastPage(),
+            ],
+        ]);
     }
 }

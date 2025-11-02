@@ -28,7 +28,7 @@ class OtpServices
         $user = $this->user->verifyUser($mobile);
 
         $save_otp = $this->otp->saveOtp([
-            'user_id' => $user->id ?? null,
+            'user_id ' => $user->id ?? null,
             'otp' => $otp,
             'is_used' => 0,
             'expires_at' => Carbon::now()->addMinutes(5)
@@ -37,7 +37,7 @@ class OtpServices
         if($save_otp){
             //send otp to mobile using sms gateway
             // event(new UserRegistered($user));
-            dispatch(new sendOtpEmail($user, $otp))->onQueue('high_priority_queue');
+            // dispatch(new sendOtpEmail($user, $otp))->onQueue('high_priority_queue');
 
             return response()->json([
                 'status' => 'success',

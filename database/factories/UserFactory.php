@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use BcMath\Number;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -25,10 +26,14 @@ class UserFactory extends Factory
     {
         return [
             'name' => fake()->name(),
+            'role_id' => 2,
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'mobile' => $this->faker->numerify('##########'),
+            'is_otp_based_login' => 1,
+            'is_stopped_alerts' => 0
         ];
     }
 
