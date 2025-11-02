@@ -85,7 +85,7 @@ class LoginController extends Controller
         
         $sendTOtp = $this->otpService->sendOtp($data['mobile']);
  
-        (!empty($sendTOtp)) ? 
+        return (!empty($sendTOtp)) ? 
             $sendTOtp : 
             response()->json([
                 'status' => 'error',
@@ -123,5 +123,10 @@ class LoginController extends Controller
 
             return $verifyOtp;
         }
+    }
+
+    public function getUserList(Request $request)
+    {
+        return $this->userService->fetchUserList();    
     }
 }

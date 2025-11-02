@@ -6,7 +6,6 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -19,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
             RateLimiter::for(
                 "api",
                 function ($request) {
-                    return Limit::perMinute(5)->by(
+                    return Limit::perMinute(3)->by(
                         $request->user()?->id ?: $request->ip()
                     );
                 }

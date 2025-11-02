@@ -16,7 +16,7 @@ class sendWelcomeEmailJob implements ShouldQueue
 
     public $tries = 3; //max attemps after job fails
 
-    public $backoff = [20, 45, 95]; // delay : 1st retry after 10 sec, 2nd after 30 sec, 3rd after 60 sec
+    public $backoff = [70]; // delay : 1st retry after 10 sec, 2nd after 30 sec, 3rd after 60 sec
 
     public $timeout = 60; //60 sec
 
